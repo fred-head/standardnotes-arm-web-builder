@@ -67,3 +67,24 @@ jobs:
           ls -la
 
           test -d packages/web && echo "packages/web found"
+
+      - name: Setup Node.js
+        if: env.BUILD_NEEDED == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: standardnotes/.nvmrc
+
+      - name: Show versions
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          corepack enable
+
+          echo "Node version:"
+          node --version
+
+          echo ""
+
+          echo "Yarn version:"
+          yarn --version
