@@ -136,3 +136,12 @@ jobs:
           echo ""
 
           ls -lah packages/web/dist || true
+
+      - name: Search API URL
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          echo "Searching for api.standardnotes.com..."
+
+          grep -R "api.standardnotes.com" packages/web/dist || true
