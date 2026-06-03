@@ -97,3 +97,25 @@ jobs:
           corepack enable
 
           yarn install --immutable
+
+      - name: Build web app
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          corepack enable
+
+          yarn build:web
+
+      - name: Verify build output
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          echo "Contents of packages/web:"
+          ls -lah packages/web
+
+          echo ""
+
+          echo "Contents of packages/web/dist:"
+          ls -lah packages/web/dist
