@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  release-check:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,12 +26,8 @@ jobs:
           echo "RELEASE=$RELEASE" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          echo "Latest release:"
-          echo "$RELEASE"
-
-          echo ""
-          echo "Detected version:"
-          echo "$VERSION"
+          echo "Latest release: $RELEASE"
+          echo "Detected version: $VERSION"
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -43,11 +39,11 @@ jobs:
       - name: Check if image already exists
         run: |
           if docker manifest inspect ghcr.io/fred-head/standardnotes-arm-web:${VERSION} >/dev/null 2>&1; then
-            echo "Image version ${VERSION} already exists."
             echo "BUILD_NEEDED=false" >> $GITHUB_ENV
+            echo "Image ${VERSION} already exists"
           else
-            echo "Image version ${VERSION} does not exist."
             echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+            echo "Image ${VERSION} does not exist"
           fi
 
       - name: Clone Standard Notes
@@ -55,92 +51,21 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/standardnotes/app.git standardnotes
 
-      - name: Verify Standard Notes checkout
+      - name: Set up QEMU
         if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
+        uses: docker/setup-qemu-action@v3
 
-          echo "Repository cloned successfully"
-
-          git rev-parse --short HEAD
-
-          ls -la
-
-          test -d packages/web && echo "packages/web found"
-
-      - name: Setup Node.js
+      - name: Set up Docker Buildx
         if: env.BUILD_NEEDED == 'true'
-        uses: actions/setup-node@v4
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push
+        if: env.BUILD_NEEDED == 'true'
+        uses: docker/build-push-action@v6
         with:
-          node-version-file: standardnotes/.nvmrc
-
-      - name: Show versions
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          corepack enable
-
-          echo "Node version:"
-          node --version
-
-          echo ""
-
-          echo "Yarn version:"
-          yarn --version
-
-      - name: Install dependencies
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          corepack enable
-
-          yarn install --immutable
-
-      - name: Build web app
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          corepack enable
-
-          yarn build:web
-
-      - name: Verify build output
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          echo "Contents of packages/web:"
-          ls -lah packages/web
-
-          echo ""
-
-          echo "Contents of packages/web/dist:"
-          ls -lah packages/web/dist
-
-      - name: Verify build output
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          echo "Build output:"
-
-          find packages/web -type d -name dist
-
-          echo ""
-
-          du -sh packages/web/dist || true
-
-          echo ""
-
-          ls -lah packages/web/dist || true
-
-      - name: Show Standard Notes API config
-        if: env.BUILD_NEEDED == 'true'
-        run: |
-          cd standardnotes
-
-          grep -n "api.standardnotes.com" packages/web/src/index.html || true
-          
+          context: .
+          push: true
+          platforms: linux/arm64
+          tags: |
+            ghcr.io/fred-head/standardnotes-arm-web:latest
+            ghcr.io/fred-head/standardnotes-arm-web:${{ env.VERSION }}
