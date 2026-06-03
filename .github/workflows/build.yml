@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Builder Repository
         uses: actions/checkout@v5
 
       - name: Get latest Standard Notes release
@@ -50,8 +50,20 @@ jobs:
             echo "BUILD_NEEDED=true" >> $GITHUB_ENV
           fi
 
-      - name: Show decision
+      - name: Clone Standard Notes
+        if: env.BUILD_NEEDED == 'true'
         run: |
-          echo "Release: $RELEASE"
-          echo "Version: $VERSION"
-          echo "Build needed: $BUILD_NEEDED"
+          git clone --depth=1 https://github.com/standardnotes/app.git standardnotes
+
+      - name: Verify Standard Notes checkout
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          echo "Repository cloned successfully"
+
+          git rev-parse --short HEAD
+
+          ls -la
+
+          test -d packages/web && echo "packages/web found"
