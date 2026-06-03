@@ -137,15 +137,10 @@ jobs:
 
           ls -lah packages/web/dist || true
 
-      - name: Search API URL
+      - name: Show Standard Notes API config
         if: env.BUILD_NEEDED == 'true'
         run: |
           cd standardnotes
 
-          echo "index.html"
-          grep -n "api.standardnotes.com" packages/web/dist/index.html || true
-
-          echo ""
-          echo "app.js"
-          grep -n "api.standardnotes.com" packages/web/dist/app.js || true
+          grep -n "api.standardnotes.com" packages/web/src/index.html || true
           
