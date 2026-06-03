@@ -119,3 +119,20 @@ jobs:
 
           echo "Contents of packages/web/dist:"
           ls -lah packages/web/dist
+
+      - name: Verify build output
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          echo "Build output:"
+
+          find packages/web -type d -name dist
+
+          echo ""
+
+          du -sh packages/web/dist || true
+
+          echo ""
+
+          ls -lah packages/web/dist || true
