@@ -88,3 +88,12 @@ jobs:
 
           echo "Yarn version:"
           yarn --version
+
+      - name: Install dependencies
+        if: env.BUILD_NEEDED == 'true'
+        run: |
+          cd standardnotes
+
+          corepack enable
+
+          yarn install --immutable
