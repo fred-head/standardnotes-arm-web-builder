@@ -142,6 +142,10 @@ jobs:
         run: |
           cd standardnotes
 
-          echo "Searching for api.standardnotes.com..."
+          echo "index.html"
+          grep -n "api.standardnotes.com" packages/web/dist/index.html || true
 
-          grep -R "api.standardnotes.com" packages/web/dist || true
+          echo ""
+          echo "app.js"
+          grep -n "api.standardnotes.com" packages/web/dist/app.js || true
+          
