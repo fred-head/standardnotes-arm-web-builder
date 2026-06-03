@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Standard Notes ARM Builder
 
 on:
   push:
@@ -7,33 +7,18 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
-  test:
+  release-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get latest Standard Notes release
+        run: |
+          RELEASE=$(curl -s https://api.github.com/repos/standardnotes/app/releases/latest | jq -r .tag_name)
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and Push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/arm64
-          tags: ghcr.io/fred-head/standardnotes-arm-web:latest
+          echo "Latest Standard Notes Release:"
+          echo "$RELEASE"
