@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
     environment:
-      SYNC_SERVER: https://notes-api.example.com
+      DEFAULT_SYNC_SERVER: https://notes-api.example.com
 
     ports:
       - "8080:80"
@@ -76,6 +76,8 @@ This repository automatically:
 3. Publishes the image to GHCR
 
 No manual build process is required.
+
+The GitHub Actions workflow runs automatically every night at 01:00 UTC and also on pushes to `main` or manual dispatch. Each run checks whether a newer Standard Notes release exists and only builds a new image when needed.
 
 ## Tested Platforms
 
