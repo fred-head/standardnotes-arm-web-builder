@@ -1,4 +1,5 @@
 name: Standard Notes ARM Builder
+run-name: Standard Notes ARM Web Builder (${{ github.event_name }})
 
 on:
   push:
