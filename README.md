@@ -1,14 +1,14 @@
 # Standard Notes ARM Web App
 
-ARM64 Docker image for the Standard Notes web application with runtime-configurable API endpoint support.
+ARM64 Docker image for the Standard Notes web app with automatic updates via GitHub Actions, publishing to GHCR, and runtime-configurable `DEFAULT_SYNC_SERVER` support.
 
-Designed for ARM-based environments such as Oracle Cloud Infrastructure (OCI) Ampere A1 instances, Raspberry Pi, and other ARM64 platforms.
+Designed for self-hosted ARM64 environments such as Oracle Cloud Infrastructure (OCI) Ampere A1 instances, Raspberry Pi, and other ARM64 platforms.
 
 ## Features
 
-- ARM64 native image
+- ARM64 native image for Standard Notes web
 - Automatic builds from the latest Standard Notes release
-- Runtime API URL configuration
+- Runtime-configurable `DEFAULT_SYNC_SERVER`
 - Published to GitHub Container Registry (GHCR)
 - Suitable for OCI Free Tier ARM instances
 
